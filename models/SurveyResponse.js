@@ -11,9 +11,11 @@ const surveyResponseSchema = new mongoose.Schema({
             answer: { type: String, required: true },
         },
     ],
+    ipAddress: { type: String, required: true }, // Add ipAddress field
     submittedAt: { type: Date, default: Date.now },
 });
 
+// Middleware to handle duplicate email error
 surveyResponseSchema.post('save', function(error, doc, next) {
     if (error.name === 'MongoError' && error.code === 11000) {
         next(new Error('Email already exists'));
@@ -22,4 +24,5 @@ surveyResponseSchema.post('save', function(error, doc, next) {
     }
 });
 
+// Export the model using a conditional statement to avoid OverwriteModelError
 export default mongoose.models.SurveyResponse || mongoose.model('SurveyResponse', surveyResponseSchema);
