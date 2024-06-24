@@ -11,7 +11,6 @@ const surveyResponseSchema = new mongoose.Schema({
             answer: { type: String, required: true },
         },
     ],
-    ipAddress: { type: String, required: true }, // Add ipAddress field
     submittedAt: { type: Date, default: Date.now },
 });
 

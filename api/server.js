@@ -3,7 +3,7 @@
 import SurveyResponse from '../models/SurveyResponse';
 
 const addResponse = async (response) => {
-    const { name, email, age, education, answers, ipAddress } = response;
+    const { name, email, age, education, answers} = response;
 
     try {
         // Check if the email already exists
@@ -12,11 +12,7 @@ const addResponse = async (response) => {
             throw new Error('Email already exists');
         }
 
-        // Check if the IP address already exists
-        const existingIpResponse = await SurveyResponse.findOne({ ipAddress });
-        if (existingIpResponse) {
-            throw new Error('IP address already used to submit a survey');
-        }
+  
 
         const newResponse = new SurveyResponse({
             name,
@@ -24,7 +20,7 @@ const addResponse = async (response) => {
             age,
             education,
             answers,
-            ipAddress,
+            
         });
 
         const savedResponse = await newResponse.save();
@@ -48,20 +44,7 @@ const addResponse = async (response) => {
     }
 };
 
-const checkIpAddress = async (ipAddress) => {
-    try {
-        const existingResponse = await SurveyResponse.findOne({ ipAddress });
 
-        if (existingResponse) {
-            return true; // IP address exists
-        } else {
-            return false; // IP address does not exist
-        }
-    } catch (error) {
-        console.error('Error checking IP address:', error);
-        throw error; // Rethrow the error to handle it in calling functions
-    }
-};
 const getUserChoicesStats = async () => {
     try {
         const responses = await SurveyResponse.find({});
@@ -101,4 +84,4 @@ const getUserChoicesStats = async () => {
         throw error;
     }
 };
-export { addResponse, checkIpAddress, getUserChoicesStats };
+export { addResponse, getUserChoicesStats };
