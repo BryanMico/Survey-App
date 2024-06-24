@@ -62,5 +62,43 @@ const checkIpAddress = async (ipAddress) => {
         throw error; // Rethrow the error to handle it in calling functions
     }
 };
+const getUserChoicesStats = async () => {
+    try {
+        const responses = await SurveyResponse.find({});
+        
+        // Dynamically generate questions and options based on responses
+        const questions = responses.reduce((acc, response) => {
+            response.answers.forEach(answer => {
+                const existingQuestion = acc.find(q => q.question === answer.question);
+                if (!existingQuestion) {
+                    acc.push({ question: answer.question, options: [] });
+                }
+                const question = acc.find(q => q.question === answer.question);
+                if (!question.options.includes(answer.answer)) {
+                    question.options.push(answer.answer);
+                }
+            });
+            return acc;
+        }, []);
 
-export { addResponse, checkIpAddress };
+        const questionStats = questions.map((question, index) => {
+            const answerCounts = question.options.map(option => ({
+                answer: option,
+                count: responses.filter(response => 
+                    response.answers.find(ans => ans.question === question.question && ans.answer === option)
+                ).length
+            }));
+            return {
+                questionId: index + 1,
+                question: question.question,
+                answers: answerCounts
+            };
+        });
+
+        return questionStats;
+    } catch (error) {
+        console.error('Error fetching user choices stats:', error);
+        throw error;
+    }
+};
+export { addResponse, checkIpAddress, getUserChoicesStats };

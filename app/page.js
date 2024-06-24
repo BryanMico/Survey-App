@@ -160,6 +160,10 @@ export default function Home() {
                 <h1 className="text-3xl font-extrabold mb-6 text-center text-transparent bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text">
                     Social Media Usage and Its Effect on Communication Skills Survey
                 </h1>
+                <div className="text-center text-gray-600 mt-4">
+    By participating in this survey, you agree to provide honest responses based on your experiences with social media usage. Your participation is voluntary, and all responses will be kept confidential. Thank you for contributing to this research.
+</div>
+
                 {submitted ? (
                     <div className="text-center">
                         <h2 className="text-2xl font-bold mb-4">You have already submitted the survey.</h2>
