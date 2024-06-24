@@ -110,7 +110,7 @@ export default function Analytics() {
 
     return (
         <div style={{ display: 'flex' }}>
-            <div style={{ flex: '1', marginRight: '20px' }}>
+            <div style={{ flex: '2', marginRight: '20px' }}>
                 <h1>Survey Analytics</h1>
                 {chartData ? (
                     <Line
@@ -147,39 +147,51 @@ export default function Analytics() {
                     <p>Loading...</p>
                 )}
             </div>
-            <div style={{ flex: '1' }}>
+            
+            <div style={{ flex: '1'  }}>
+            <div className="p-6 bg-black rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold mb-4 text-white-800">Overall Analytics</h3>
+        <div className="flex flex-wrap">
+            <div className="flex-1 p-4 bg-gray-100 rounded-lg shadow-sm mb-4 text-sm">
+                <p className="text-gray-700">Total Responses: {analyticsData ? analyticsData.totalResponses : 'Loading...'}</p>
+                <p className="text-gray-700">Average Age: {analyticsData ? analyticsData.averageAge : 'Loading...'}</p>
+            </div>
+            <div className="flex-2 p-4 bg-gray-100 rounded-lg shadow-sm mb-4 ml-4 text-sm">
+                <h4 className="text-md font-semibold mb-2 text-gray-800">Education Level Distribution:</h4>
+                {analyticsData ? (
+                    <ul className="text-gray-700">
+                        {analyticsData.educationStats.map((educationStat, index) => (
+                            <li key={index}>
+                                {educationStat.level}: {educationStat.count}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-gray-700">Loading...</p>
+                )}
+            </div>
+        </div>
+    </div>
                 <div>
                     {stats.map(stat => (
-                        <div key={stat.question} style={{ marginBottom: '10px' }}>
+                        <div key={stat.question} style={{ marginBottom: '10px',  }}>
                             <FormControlLabel
                                 control={
                                     <Switch
                                         checked={selectedQuestion === stat.question}
                                         onChange={() => handleSwitchChange(stat.question)}
                                         color="primary"
+                                        
                                     />
                                 }
-                                label={stat.question}
+                                label={
+                                    <span style={{ fontSize: '12px' }}>
+                                        {stat.question}
+                                    </span>
+                                }
                             />
                         </div>
                     ))}
-                </div>
-                <div>
-                    <h3>Overall Analytics</h3>
-                    <p>Total Responses: {analyticsData ? analyticsData.totalResponses : 'Loading...'}</p>
-                    <p>Average Age: {analyticsData ? analyticsData.averageAge : 'Loading...'}</p>
-                    <h4>Education Level Distribution:</h4>
-                    {analyticsData ? (
-                        <ul>
-                            {analyticsData.educationStats.map((educationStat, index) => (
-                                <li key={index}>
-                                    {educationStat.level}: {educationStat.count}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>Loading...</p>
-                    )}
                 </div>
             </div>
         </div>

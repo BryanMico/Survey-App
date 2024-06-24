@@ -137,112 +137,11 @@ const getUserChoicesStats = async () => {
     }
 };
 
-const calculateCorrelation = (data1, data2) => {
-    // Implement your correlation calculation logic here
-    // Example code to calculate Pearson correlation coefficient
-    const mean1 = mean(data1.map(item => item.frequency));
-    const mean2 = mean(data2.map(item => item.preferredMode));
 
-    const covarianceValue = covariance(data1.map(item => item.frequency), data2.map(item => item.preferredMode), mean1, mean2);
-    const stdDeviation1 = stdDeviation(data1.map(item => item.frequency), mean1);
-    const stdDeviation2 = stdDeviation(data2.map(item => item.preferredMode), mean2);
-
-    return covarianceValue / (stdDeviation1 * stdDeviation2);
-};
-
-const mean = (array) => {
-    return array.reduce((a, b) => a + b) / array.length;
-};
-
-const covariance = (array1, array2, mean1, mean2) => {
-    return array1.reduce((acc, val, index) => acc + (val - mean1) * (array2[index] - mean2), 0) / array1.length;
-};
-
-const stdDeviation = (array, mean) => {
-    const variance = array.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / array.length;
-    return Math.sqrt(variance);
-};
-
-const getCorrelationAnalysis = async () => {
-    try {
-        const responses = await SurveyResponse.find({});
-
-        // Extract relevant data for analysis
-        const socialMediaUsage = responses.map(response => ({
-            userId: response._id,
-            frequency: response.socialMediaUsageFrequency, // Example field for frequency of social media usage
-            preferredMode: response.communicationPreferredMode // Example field for preferred communication mode
-        }));
-
-        // Perform correlation analysis between social media usage and preferred communication mode
-        const correlationCoefficient = calculateCorrelation(socialMediaUsage.map(item => ({
-            frequency: item.frequency
-        })), socialMediaUsage.map(item => ({
-            preferredMode: item.preferredMode
-        })));
-
-        return {
-            socialMediaUsage,
-            correlationCoefficient
-        };
-    } catch (error) {
-        console.error('Error performing correlation analysis:', error);
-        throw error;
-    }
-};
-
-const getMisunderstandingAnalysis = async () => {
-    try {
-        const responses = await SurveyResponse.find({});
-
-        // Extract relevant data for analysis
-        const misunderstandings = responses.map(response => ({
-            userId: response._id,
-            frequency: response.misunderstandingFrequency, // Example field for frequency of misunderstandings
-            causes: response.misunderstandingCauses // Example field for perceived causes of misunderstandings
-        }));
-
-        // Perform frequency analysis on causes of misunderstandings
-        const misunderstandingFrequency = calculateMisunderstandingFrequency(misunderstandings);
-
-        return {
-            misunderstandings,
-            misunderstandingFrequency
-        };
-    } catch (error) {
-        console.error('Error performing misunderstanding analysis:', error);
-        throw error;
-    }
-};
-
-const calculateMisunderstandingFrequency = (misunderstandings) => {
-    // Implement your frequency analysis logic here
-    const frequencyMap = new Map();
-
-    misunderstandings.forEach(response => {
-        response.causes.forEach(cause => {
-            if (frequencyMap.has(cause)) {
-                frequencyMap.set(cause, frequencyMap.get(cause) + 1);
-            } else {
-                frequencyMap.set(cause, 1);
-            }
-        });
-    });
-
-    // Convert map to array of objects for easier manipulation
-    const frequencyArray = Array.from(frequencyMap, ([cause, frequency]) => ({ cause, frequency }));
-
-    // Sort by frequency in descending order
-    frequencyArray.sort((a, b) => b.frequency - a.frequency);
-
-    return frequencyArray;
-};
 
 
 export {
     addResponse,
     getUserChoicesStats,
     checkIpAddress,
-    getCorrelationAnalysis,
-    getMisunderstandingAnalysis,
 };
