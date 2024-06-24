@@ -103,4 +103,4 @@ const getUserChoicesStats = async () => {
         throw error;
     }
 };
-export { addResponse, getUserChoicesStats };
+export { addResponse, getUserChoicesStats, checkIpAddress };
