@@ -1,6 +1,7 @@
-"use client"
-import React, { useState } from 'react';
-import { addResponse } from '../api/server';
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { addResponse, checkIpAddress } from '../api/server';
 
 const questions = [
     {
@@ -62,12 +63,32 @@ export default function Home() {
         age: '',
         education: '',
         answers: [],
+        ipAddress: ''
     });
 
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [submitted, setSubmitted] = useState(false);
+
+    useEffect(() => {
+        async function fetchIpAddress() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                setFormData(prevState => ({ ...prevState, ipAddress: data.ip }));
+    
+                const ipCheck = await checkIpAddress(data.ip);
+                if (ipCheck) {
+                    setSubmitted(true);
+                }
+            } catch (err) {
+                console.error('Error fetching IP address:', err);
+            }
+        }
+    
+        fetchIpAddress();
+    }, []);
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -91,6 +112,13 @@ export default function Home() {
         setError('');
     
         try {
+            // Check if IP address has already submitted a survey
+            const ipCheck = await checkIpAddress(formData.ipAddress);
+            if (ipCheck) {
+                setSubmitted(true); // IP address has already submitted
+                return;
+            }
+    
             const res = await addResponse(formData);
     
             if (res && res.name) {
@@ -101,15 +129,17 @@ export default function Home() {
                     age: '',
                     education: '',
                     answers: [],
+                    ipAddress: formData.ipAddress
                 });
                 setShowModal(true);
-                setSubmitted(true);
             } else {
                 console.error('Error saving survey response');
             }
         } catch (error) {
             if (error.message === 'Email already exists') {
                 setError('This email has already been used to submit a survey.');
+            } else if (error.message === 'IP address already used to submit a survey') {
+                setError('You have already submitted a survey from this IP address.');
             } else {
                 setError('An error occurred while submitting the survey.');
             }
@@ -130,10 +160,6 @@ export default function Home() {
                 <h1 className="text-3xl font-extrabold mb-6 text-center text-transparent bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text">
                     Social Media Usage and Its Effect on Communication Skills Survey
                 </h1>
-                <div className="text-center text-gray-600 mt-4">
-                    By participating in this survey, you agree to provide honest responses based on your experiences with social media usage. Your participation is voluntary, and all responses will be kept confidential. Thank you for contributing to this research.
-                </div>
-
                 {submitted ? (
                     <div className="text-center">
                         <h2 className="text-2xl font-bold mb-4">You have already submitted the survey.</h2>
@@ -229,7 +255,7 @@ export default function Home() {
                                 </div>
                             ))}
                             <div className="flex justify-center">
-                                <button
+                            <button
                                     className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
                                     type="submit"
                                 >
@@ -239,12 +265,12 @@ export default function Home() {
                         </form>
                     </>
                 )}
-                       </div>
+            </div>
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-                        <h2 className="text-2xl font-bold mb-4 text-green-500">Thank you for your response!</h2>
-                        <p className="text-gray-400 mb-4">Your survey response has been successfully submitted.</p>
+                    <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+                        <h2 className="text-2xl font-bold mb-4 text-white">Thank You!</h2>
+                        <p className="text-gray-400 mb-4">Your survey response has been submitted successfully.</p>
                         <button
                             className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
                             onClick={() => setShowModal(false)}
@@ -257,4 +283,3 @@ export default function Home() {
         </div>
     );
 }
-
