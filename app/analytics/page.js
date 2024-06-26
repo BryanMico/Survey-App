@@ -149,10 +149,10 @@ export default function Analytics() {
             </div>
             
             <div style={{ flex: '1'  }}>
-            <div className="p-6 bg-black rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold mb-4 text-white-800">Overall Analytics</h3>
+            <div className="p-6 bg-white rounded-lg shadow-md m-5">
+        <h3 className="text-lg font-semibold mb-4 text-black-800">Overall Analytics</h3>
         <div className="flex flex-wrap">
-            <div className="flex-1 p-4 bg-gray-100 rounded-lg shadow-sm mb-4 text-sm">
+            <div className="flex-1 p-5 bg-gray-100 rounded-lg shadow-sm mb-4 text-sm">
                 <p className="text-gray-700">Total Responses: {analyticsData ? analyticsData.totalResponses : 'Loading...'}</p>
                 <p className="text-gray-700">Average Age: {analyticsData ? analyticsData.averageAge : 'Loading...'}</p>
             </div>
